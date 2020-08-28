@@ -22,11 +22,11 @@ class ApiController extends Controller
 		return $products;
 	}
 	
-	public function getSKU($sku)
+	public function getSKU($id)
 	{
 		//Get SKU product
-		$skuProduct = $this->product->findBySku($sku);
-		return skuProduct;
+		$skuProduct = $this->product->findBySku($id);
+		return $skuProduct;
 	}
 }
 

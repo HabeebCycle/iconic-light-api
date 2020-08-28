@@ -14,20 +14,23 @@ class Product
 
 	public function all()
 	{
-		return $this->endpointRequest('/catalog/products');
+		//return $this->endpointRequest('/catalog/products');
+		return $this->endpointRequest('/todos');
 	}
 
 	public function findBySku($sku)
 	{
-		return $this->endpointRequest('/catalog/products/'.$sku);
+		//return $this->endpointRequest('/catalog/products/'.$sku);
+		return $this->endpointRequest('/todos/'.$sku);
 	}
 
 	public function endpointRequest($url)
 	{
+		
 		try {
 			$response = $this->client->request('GET', $url);
 		} catch (\Exception $e) {
-			echo $e;
+			echo $e->getMessage();
             return [];
 		}
 
@@ -37,7 +40,7 @@ class Product
 	public function response_handler($response)
 	{
 		if ($response) {
-			return json_decode($response);
+			return response()->json(json_decode($response));
 		}
 		
 		return [];
