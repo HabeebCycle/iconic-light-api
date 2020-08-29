@@ -14,20 +14,30 @@ class Product
 
 	public function all()
 	{
-		//return $this->endpointRequest('/catalog/products');
-		return $this->endpointRequest('/todos');
+		return $this->endpointRequest('/catalog/products');
 	}
 
 	public function findBySku($sku)
 	{
-		//return $this->endpointRequest('/catalog/products/'.$sku);
-		return $this->endpointRequest('/todos/'.$sku);
+		return $this->endpointRequest('/catalog/products/'.$sku);
+	}
+	
+	public function searchProductWithQueries($gender, $page, $page_size, $sort)
+	{
+		$response = $this->endpointRequest("/catalog/products?gender=$gender&page=$page&page_size=$page_size&sort=$sort");
+		
+		if($response)
+		{
+			return addVideoLink($response["_embedded"]["product"]);
+		}
+		return $response;
 	}
 
 	public function endpointRequest($url)
 	{
 		
-		try {
+		try 
+		{
 			$response = $this->client->request('GET', $url);
 		} catch (\Exception $e) {
 			echo $e->getMessage();
@@ -39,10 +49,31 @@ class Product
 
 	public function response_handler($response)
 	{
-		if ($response) {
+		if ($response) 
+		{
 			return response()->json(json_decode($response));
 		}
 		
 		return [];
+	}
+	
+	function addVideoLink($res)
+	{
+		foreach($res as $key => $value)
+		{
+			if($key == '_embedded')
+			{
+				foreach($value["product"] as $k => $val)
+				{
+					$sku = $val["sku"];
+					$video_link = ([
+						"url" => "https://eve.theiconic.com.au/products/".$sku."/videos"
+					]);
+
+					$res["_embedded"]["product"][$k]["video"] = $video_link;
+				}
+			}
+		}
+		return $res;
 	}
 }
